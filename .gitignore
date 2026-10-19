@@ -1,0 +1,22 @@
+# Java
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
+*.class
+*.jar
+*.war
+hs_err_pid*
+replay_pid*
+
+# Node
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Env and IDE
+.env
+.env.local
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db

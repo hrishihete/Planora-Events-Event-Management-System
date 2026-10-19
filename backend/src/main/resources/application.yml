@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: planora-api
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/planora}
+    username: ${SPRING_DATASOURCE_USERNAME:planora}
+    password: ${SPRING_DATASOURCE_PASSWORD:planora}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+
+server:
+  port: ${SERVER_PORT:8080}
+  error:
+    include-message: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+planora:
+  cors:
+    allowed-origins: ${PLANORA_CORS_ORIGINS:http://localhost:5173}
