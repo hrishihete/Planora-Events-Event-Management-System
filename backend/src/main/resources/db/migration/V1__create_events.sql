@@ -9,7 +9,7 @@ CREATE TABLE events (
     location VARCHAR(255) NOT NULL,
     headcount INTEGER NOT NULL CHECK (headcount >= 1),
     budget_cents BIGINT NOT NULL CHECK (budget_cents >= 0),
-    currency CHAR(3) NOT NULL DEFAULT 'USD',
+    currency VARCHAR(3) NOT NULL DEFAULT 'USD',
     details TEXT,
     special_requests TEXT,
     status VARCHAR(40) NOT NULL,

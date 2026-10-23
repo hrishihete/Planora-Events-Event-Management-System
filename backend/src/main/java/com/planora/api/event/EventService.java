@@ -30,7 +30,11 @@ public class EventService {
         event.setLocation(request.location().trim());
         event.setHeadcount(request.headcount());
         event.setBudgetCents(request.budgetCents());
-        event.setCurrency(request.currency() == null || request.currency().isBlank() ? "USD" : request.currency());
+        event.setCurrency(
+                request.currency() == null || request.currency().isBlank()
+                        ? "USD"
+                        : request.currency().trim().toUpperCase()
+        );
         event.setDetails(blankToNull(request.details()));
         event.setSpecialRequests(blankToNull(request.specialRequests()));
         event.setStatus(EventStatus.DRAFT_REQUEST);

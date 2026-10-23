@@ -84,4 +84,39 @@ WBS for task breakdown
 Financial estimation: break-even analysis, investment ROI, pricing model
 
 
+## Planora Events 2.0 — Phase 1 (local)
+
+Phase 1 is the event request vertical only: create and retrieve events. Original PDFs and this overview stay in the repo. Payments, vendor booking, AI, and microservices are out of scope.
+
+### Prerequisites
+- Java 21
+- Maven 3.9+ (or use the included `backend/mvnw`)
+- Node.js 20+
+- Docker Desktop (PostgreSQL via Compose, Testcontainers for API tests)
+
+### Configure
+Copy `.env.example` to `.env` in the repo root if you need local overrides. Defaults are:
+
+- PostgreSQL `planora` / `planora` / `planora` on port `5432`
+- API `http://localhost:8080`
+- Web `http://localhost:5173` (Vite also proxies `/api` to the API)
+
+### Start
+```bash
+docker compose up -d
+cd backend && ./mvnw spring-boot:run   # Windows: .\\mvnw.cmd spring-boot:run
+cd frontend && npm install && npm run dev
+```
+
+Open http://localhost:5173 to list events and http://localhost:5173/events/new to submit a request.
+
+### Tests
+```bash
+cd backend && ./mvnw verify   # Windows: .\\mvnw.cmd verify
+cd frontend && npm test
+cd frontend && npm run build
+```
+
+
+
 
