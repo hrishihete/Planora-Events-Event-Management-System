@@ -1,9 +1,12 @@
 import { NavLink, Outlet } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 
 const navClass = ({ isActive }: { isActive: boolean }) =>
   `text-sm tracking-wide ${isActive ? "text-planora-rose font-semibold" : "text-slate-600 hover:text-planora-plum"}`;
 
 export default function Layout() {
+  const { user, isManager, logout } = useAuth();
+
   return (
     <div className="flex min-h-screen flex-col bg-white">
       <header className="border-b border-slate-100">
@@ -15,12 +18,33 @@ export default function Layout() {
             <NavLink to="/" className={navClass} end>
               Home
             </NavLink>
-            <NavLink to="/" className={navClass}>
-              Events
-            </NavLink>
-            <NavLink to="/events/new" className={navClass}>
-              Request Event
-            </NavLink>
+            {user && (
+              <NavLink to="/" className={navClass}>
+                {isManager ? "Inbox" : "My Events"}
+              </NavLink>
+            )}
+            {user && !isManager && (
+              <NavLink to="/events/new" className={navClass}>
+                Request Event
+              </NavLink>
+            )}
+            {user ? (
+              <>
+                <span className="text-sm text-slate-500">{user.fullName}</span>
+                <button type="button" onClick={logout} className="text-sm text-planora-rose">
+                  Log out
+                </button>
+              </>
+            ) : (
+              <>
+                <NavLink to="/login" className={navClass}>
+                  Log in
+                </NavLink>
+                <NavLink to="/register" className={navClass}>
+                  Register
+                </NavLink>
+              </>
+            )}
           </nav>
         </div>
       </header>

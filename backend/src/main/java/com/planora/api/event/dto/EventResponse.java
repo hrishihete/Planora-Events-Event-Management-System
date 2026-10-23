@@ -9,6 +9,7 @@ import java.util.UUID;
 
 public record EventResponse(
         UUID id,
+        UUID ownerId,
         String requesterName,
         String requesterEmail,
         String requesterPhone,
@@ -29,6 +30,7 @@ public record EventResponse(
     public static EventResponse from(Event event) {
         return new EventResponse(
                 event.getId(),
+                event.getOwner() == null ? null : event.getOwner().getId(),
                 event.getRequesterName(),
                 event.getRequesterEmail(),
                 event.getRequesterPhone(),

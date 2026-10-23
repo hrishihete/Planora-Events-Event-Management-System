@@ -17,8 +17,20 @@ export type EventStatus =
   | "REJECTED"
   | "PLANNING";
 
+export type RoleName = "CLIENT" | "EVENT_MANAGER";
+
+export type AuthUser = {
+  userId: string;
+  email: string;
+  fullName: string;
+  roles: RoleName[];
+};
+
+export type EventDecision = "ACCEPT_TO_PLANNING" | "REJECT";
+
 export type EventRecord = {
   id: string;
+  ownerId: string | null;
   requesterName: string;
   requesterEmail: string;
   requesterPhone: string | null;

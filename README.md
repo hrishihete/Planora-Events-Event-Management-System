@@ -110,6 +110,17 @@ cd frontend && npm install && npm run dev
 
 Open http://localhost:5173 to list events and http://localhost:5173/events/new to submit a request.
 
+## Phase 2 — accounts and manager review
+
+Event APIs now require a JWT. Register as a client, or use the seeded demo users (created on API startup):
+
+- Client: `client@planora.local` / `Planora123!`
+- Event manager: `manager@planora.local` / `Planora123!`
+
+A client only sees their own requests. A manager sees the inbox, can request more details, accept into `PLANNING`, or reject. Self-service registration always creates a `CLIENT` (managers are internal).
+
+New routes: `/login`, `/register`, `GET /api/v1/me`, `POST /api/v1/auth/login`, `POST /api/v1/auth/register`.
+
 ### Tests
 ```bash
 cd backend && ./mvnw verify   # Windows: .\\mvnw.cmd verify

@@ -1,9 +1,15 @@
 package com.planora.api.error;
 
 import com.planora.api.event.EventNotFoundException;
+import com.planora.api.event.IllegalEventStateException;
+import com.planora.api.identity.DuplicateEmailException;
+import com.planora.api.identity.ForbiddenException;
+import com.planora.api.identity.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -22,6 +28,38 @@ public class ApiExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
         problem.setTitle("Event not found");
         problem.setType(URI.create("https://planora.local/problems/not-found"));
+        return problem;
+    }
+
+    @ExceptionHandler(DuplicateEmailException.class)
+    ProblemDetail conflict(DuplicateEmailException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setTitle("Email already registered");
+        problem.setType(URI.create("https://planora.local/problems/conflict"));
+        return problem;
+    }
+
+    @ExceptionHandler(IllegalEventStateException.class)
+    ProblemDetail illegalState(IllegalEventStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setTitle("Illegal event state");
+        problem.setType(URI.create("https://planora.local/problems/conflict"));
+        return problem;
+    }
+
+    @ExceptionHandler({ForbiddenException.class, AccessDeniedException.class})
+    ProblemDetail forbidden(RuntimeException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
+        problem.setTitle("Forbidden");
+        problem.setType(URI.create("https://planora.local/problems/forbidden"));
+        return problem;
+    }
+
+    @ExceptionHandler({UnauthorizedException.class, AuthenticationException.class})
+    ProblemDetail unauthorized(RuntimeException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, "Authentication required");
+        problem.setTitle("Unauthorized");
+        problem.setType(URI.create("https://planora.local/problems/unauthorized"));
         return problem;
     }
 

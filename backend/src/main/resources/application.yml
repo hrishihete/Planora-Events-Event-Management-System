@@ -33,3 +33,8 @@ management:
 planora:
   cors:
     allowed-origins: ${PLANORA_CORS_ORIGINS:http://localhost:5173}
+  jwt:
+    secret: ${PLANORA_JWT_SECRET:planora-dev-only-change-me-32chars!!}
+    expiration-minutes: ${PLANORA_JWT_EXPIRATION_MINUTES:480}
+  seed-users: ${PLANORA_SEED_USERS:true}
+  seed-password: ${PLANORA_SEED_PASSWORD:Planora123!}

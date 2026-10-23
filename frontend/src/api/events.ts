@@ -1,35 +1,11 @@
-import type { CreateEventPayload, EventRecord, ProblemDetails } from "../types";
+import type { CreateEventPayload, EventDecision, EventRecord } from "../types";
+import { apiFetch, parseError } from "./http";
 
-export class ApiError extends Error {
-  readonly status: number;
-  readonly problem: ProblemDetails;
-
-  constructor(status: number, problem: ProblemDetails) {
-    super(problem.detail ?? problem.title ?? `Request failed (${status})`);
-    this.status = status;
-    this.problem = problem;
-  }
-}
-
-export function apiBaseUrl(): string {
-  const configured = import.meta.env.VITE_API_BASE_URL;
-  if (configured === undefined || configured === "") {
-    return "";
-  }
-  return configured.replace(/\/$/, "");
-}
-
-async function parseError(response: Response): Promise<ApiError> {
-  try {
-    const body = (await response.json()) as ProblemDetails;
-    return new ApiError(response.status, body);
-  } catch {
-    return new ApiError(response.status, { title: "Request failed", detail: response.statusText });
-  }
-}
+export { ApiError } from "./http";
+export { apiBaseUrl } from "./http";
 
 export async function listEvents(): Promise<EventRecord[]> {
-  const response = await fetch(`${apiBaseUrl()}/api/v1/events`);
+  const response = await apiFetch("/api/v1/events");
   if (!response.ok) {
     throw await parseError(response);
   }
@@ -37,7 +13,7 @@ export async function listEvents(): Promise<EventRecord[]> {
 }
 
 export async function getEvent(id: string): Promise<EventRecord> {
-  const response = await fetch(`${apiBaseUrl()}/api/v1/events/${id}`);
+  const response = await apiFetch(`/api/v1/events/${id}`);
   if (!response.ok) {
     throw await parseError(response);
   }
@@ -45,10 +21,42 @@ export async function getEvent(id: string): Promise<EventRecord> {
 }
 
 export async function createEvent(payload: CreateEventPayload): Promise<EventRecord> {
-  const response = await fetch(`${apiBaseUrl()}/api/v1/events`, {
+  const response = await apiFetch("/api/v1/events", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
+  });
+  if (!response.ok) {
+    throw await parseError(response);
+  }
+  return (await response.json()) as EventRecord;
+}
+
+export async function requestEventDetails(id: string): Promise<EventRecord> {
+  const response = await apiFetch(`/api/v1/events/${id}/request-details`, { method: "POST" });
+  if (!response.ok) {
+    throw await parseError(response);
+  }
+  return (await response.json()) as EventRecord;
+}
+
+export async function submitEventDetails(
+  id: string,
+  payload: { details?: string; specialRequests?: string },
+): Promise<EventRecord> {
+  const response = await apiFetch(`/api/v1/events/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) {
+    throw await parseError(response);
+  }
+  return (await response.json()) as EventRecord;
+}
+
+export async function decideEvent(id: string, decision: EventDecision): Promise<EventRecord> {
+  const response = await apiFetch(`/api/v1/events/${id}/decision`, {
+    method: "POST",
+    body: JSON.stringify({ decision }),
   });
   if (!response.ok) {
     throw await parseError(response);

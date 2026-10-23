@@ -1,6 +1,7 @@
-import { FormEvent, type ReactNode, useState } from "react";
+import { FormEvent, type ReactNode, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ApiError, createEvent, dollarsToCents, toOffsetDateTime } from "../api/events";
+import { useAuth } from "../auth/AuthContext";
 import { EVENT_TYPES, type EventType } from "../types";
 import { eventTypeLabel } from "../lib/format";
 
@@ -36,7 +37,19 @@ const INITIAL: FormState = {
 
 export default function CreateEventPage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [form, setForm] = useState<FormState>(INITIAL);
+
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+    setForm((current) => ({
+      ...current,
+      requesterName: current.requesterName || user.fullName,
+      requesterEmail: current.requesterEmail || user.email,
+    }));
+  }, [user]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
